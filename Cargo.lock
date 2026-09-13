@@ -283,6 +283,7 @@ name = "discordbot-rs"
 version = "0.1.0"
 dependencies = [
  "dotenvy",
+ "log",
  "serenity",
  "tokio",
 ]
