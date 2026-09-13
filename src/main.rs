@@ -1,16 +1,11 @@
 use std::env;
 
-mod logging;
-
 use dotenvy;
-use log::{info, warn, error};
-use log::LevelFilter;
-use logging::Logger;
 use serenity::async_trait;
 use serenity::model::channel::Message;
 use serenity::prelude::*;
-
-static LOGGER: Logger = Logger;
+use tracing::{info, warn, error};
+use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
 
 struct Handler;
 
@@ -19,7 +14,7 @@ impl EventHandler for Handler {
     async fn message(&self, ctx: Context, msg: Message) {
         if msg.content == "!ping" {
             if let Err(why) = msg.channel_id.say(ctx.http, "Pong!").await {
-                println!("Error sending message: {why:?}");
+                error!("Error sending message: {why:?}");
             }
         }
     }
@@ -27,10 +22,13 @@ impl EventHandler for Handler {
 
 #[tokio::main]
 async fn main() {
-    let _ = log::set_logger(&LOGGER)
-        .map(|()| log::set_max_level(LevelFilter::Info));
-    error!("Test");
-    println!("Test_print");
+    tracing_subscriber::registry()
+        .with(
+            EnvFilter::try_from_default_env()
+                .unwrap_or_else(|_| EnvFilter::new("info")),
+        )
+        .with(tracing_subscriber::fmt::layer())
+        .init();
 
     // Load env vars
     dotenvy::dotenv().expect("Expected a .env file");
@@ -49,6 +47,6 @@ async fn main() {
         .expect("Err creating client");
 
     if let Err(why) = client.start().await {
-        println!("Client error: {why:?}");
+        error!("Client error: {why:?}");
     }
 }
