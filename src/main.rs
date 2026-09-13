@@ -1,10 +1,10 @@
 use std::env;
 
-use dotenvy;
+use dotenvy::dotenv;
 use serenity::async_trait;
 use serenity::model::channel::Message;
 use serenity::prelude::*;
-use tracing::{error, info, warn};
+use tracing::error;
 use tracing_subscriber::{EnvFilter, layer::SubscriberExt, util::SubscriberInitExt};
 
 struct Handler;
@@ -28,7 +28,7 @@ async fn main() {
         .init();
 
     // Load env vars
-    dotenvy::dotenv().expect("Expected a .env file");
+    dotenv().expect("Expected a .env file");
 
     // Login
     let token = env::var("BOT_TOKEN").expect("Expected a BOT_TOKEN in the environment");
