@@ -4,8 +4,8 @@ use dotenvy;
 use serenity::async_trait;
 use serenity::model::channel::Message;
 use serenity::prelude::*;
-use tracing::{info, warn, error};
-use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
+use tracing::{error, info, warn};
+use tracing_subscriber::{EnvFilter, layer::SubscriberExt, util::SubscriberInitExt};
 
 struct Handler;
 
@@ -23,10 +23,7 @@ impl EventHandler for Handler {
 #[tokio::main]
 async fn main() {
     tracing_subscriber::registry()
-        .with(
-            EnvFilter::try_from_default_env()
-                .unwrap_or_else(|_| EnvFilter::new("info")),
-        )
+        .with(EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info")))
         .with(tracing_subscriber::fmt::layer())
         .init();
 
@@ -37,9 +34,8 @@ async fn main() {
     let token = env::var("BOT_TOKEN").expect("Expected a BOT_TOKEN in the environment");
 
     // Intents
-    let intents = GatewayIntents::GUILD_MESSAGES
-        | GatewayIntents::MESSAGE_CONTENT;
-    
+    let intents = GatewayIntents::GUILD_MESSAGES | GatewayIntents::MESSAGE_CONTENT;
+
     // Create client instance
     let mut client = Client::builder(token, intents)
         .event_handler(Handler)
