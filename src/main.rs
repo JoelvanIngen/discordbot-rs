@@ -36,7 +36,7 @@ async fn main() {
     dotenvy::dotenv().expect("Expected a .env file");
 
     // Login
-    let token = env::var("BOT_TOKEN").expect("Expected a Discord token in the environment");
+    let token = env::var("BOT_TOKEN").expect("Expected a BOT_TOKEN in the environment");
 
     // Intents
     let intents = GatewayIntents::GUILD_MESSAGES
