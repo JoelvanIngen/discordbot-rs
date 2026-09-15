@@ -6,7 +6,7 @@ use dotenvy::dotenv;
 use serenity::prelude::*;
 use tracing_subscriber::{EnvFilter, layer::SubscriberExt, util::SubscriberInitExt};
 
-use crate::command::{command_check, pre_command};
+use crate::command::{command_check, ping, pre_command, version};
 
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
@@ -23,7 +23,7 @@ async fn main() {
     // Load env vars
     dotenv().expect("Expected a .env file");
 
-    let commands = vec![command::ping(), command::version()];
+    let commands = vec![ping(), version()];
 
     let options = poise::FrameworkOptions {
         commands: commands,
