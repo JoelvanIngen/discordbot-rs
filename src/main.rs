@@ -4,6 +4,7 @@ use std::env;
 
 use dotenvy::dotenv;
 use serenity::prelude::*;
+use tracing::info;
 use tracing_subscriber::{EnvFilter, layer::SubscriberExt, util::SubscriberInitExt};
 
 use crate::command::{command_check, ping, pre_command, version};
@@ -44,7 +45,7 @@ async fn main() {
     let framework = poise::Framework::builder()
         .setup(move |ctx, ready, framework| {
             Box::pin(async move {
-                println!("Logged in as {}", ready.user.name);
+                info!("Logged in as {}", ready.user.name);
                 poise::builtins::register_globally(ctx, &framework.options().commands).await?;
                 Ok(Data {})
             })
