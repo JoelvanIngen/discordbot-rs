@@ -39,15 +39,27 @@ pub async fn remove(
 ) -> Result<(), Error> {
     match reply {
         Some(r) => {
-            database::autoreply::delete_reply(&ctx.data().db_pool, &trigger, &r).await?;
-            ctx.reply(format!("Successfully deleted reply {} => {}", trigger, r))
-                .await?;
+            match database::autoreply::delete_reply(&ctx.data().db_pool, &trigger, &r).await? {
+                true => {
+                    ctx.reply(format!("Successfully deleted reply {} => {}", trigger, r))
+                        .await?;
+                }
+                false => {
+                    ctx.reply(format!("No command-reply found for {} => {}", trigger, r))
+                        .await?;
+                }
+            }
         }
-        None => {
-            database::autoreply::delete_trigger(&ctx.data().db_pool, &trigger).await?;
-            ctx.reply(format!("Successfully deleted command {}", trigger))
-                .await?;
-        }
+        None => match database::autoreply::delete_trigger(&ctx.data().db_pool, &trigger).await? {
+            true => {
+                ctx.reply(format!("Successfully deleted command {}", trigger))
+                    .await?;
+            }
+            false => {
+                ctx.reply(format!("No command found for {}", trigger))
+                    .await?;
+            }
+        },
     }
 
     Ok(())

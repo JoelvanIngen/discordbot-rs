@@ -31,24 +31,25 @@ pub async fn delete_reply(
     pool: &SqlitePool,
     trigger: &String,
     reply: &String,
-) -> Result<(), Error> {
-    query("DELETE FROM autoreplies WHERE trigger = ? AND reply = ?")
+) -> Result<bool, Error> {
+    let res = query("DELETE FROM autoreplies WHERE trigger = ? AND reply = ?")
         .bind(trigger)
         .bind(reply)
         .execute(pool)
         .await?;
 
-    Ok(())
+    Ok(res.rows_affected() > 0)
 }
 
 /// Attempts to delete a trigger and all its replies
-pub async fn delete_trigger(pool: &SqlitePool, trigger: &String) -> Result<(), Error> {
-    query("DELETE FROM autoreplies WHERE trigger = ?")
+/// Returns success or failure (not existent)
+pub async fn delete_trigger(pool: &SqlitePool, trigger: &String) -> Result<bool, Error> {
+    let res = query("DELETE FROM autoreplies WHERE trigger = ?")
         .bind(trigger)
         .execute(pool)
         .await?;
 
-    Ok(())
+    Ok(res.rows_affected() > 0)
 }
 
 /// Lists all triggers, not their replies
