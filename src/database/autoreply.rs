@@ -5,7 +5,7 @@ use sqlx::Error;
 /// Adds an autoreply entry to database
 /// Autoreply entry must already be checked for validity
 pub async fn add_reply(pool: &SqlitePool, trigger: &String, reply: &String) -> Result<(), Error> {
-    query("INSERT INTO autoreplies (trigger, reply) VALUES (?, ?)")
+    query("INSERT OR IGNORE INTO autoreplies (trigger, reply) VALUES (?, ?)")
         .bind(trigger)
         .bind(reply)
         .execute(pool)

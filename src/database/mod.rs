@@ -12,7 +12,7 @@ pub async fn init_db(pool: &SqlitePool) -> Result<(), Error> {
             trigger TEXT NOT NULL,
             reply TEXT NOT NULL
         );
-        CREATE INDEX IF NOT EXISTS idx_autoreplies_trigger ON autoreplies(trigger);
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_autoreplies_trigger ON autoreplies(trigger, reply);
         "#,
     )
     .execute(pool)
