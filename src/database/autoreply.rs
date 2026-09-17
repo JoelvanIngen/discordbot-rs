@@ -53,14 +53,14 @@ pub async fn delete_trigger(pool: &SqlitePool, trigger: &String) -> Result<(), E
 
 /// Lists all triggers, not their replies
 pub async fn get_triggers(pool: &SqlitePool) -> Result<Vec<String>, Error> {
-    query_scalar::<_, String>("SELECT DISTINCT trigger FROM autoreplies LIMIT 100")
+    query_scalar("SELECT DISTINCT trigger FROM autoreplies LIMIT 100")
         .fetch_all(pool)
         .await
 }
 
 /// Lists all replies of specific trigger
 pub async fn get_replies(pool: &SqlitePool, trigger: &String) -> Result<Vec<String>, Error> {
-    query_scalar::<_, String>("SELECT DISTINCT reply FROM autoreplies WHERE trigger = ? LIMIT 100")
+    query_scalar("SELECT DISTINCT reply FROM autoreplies WHERE trigger = ? LIMIT 100")
         .bind(trigger)
         .fetch_all(pool)
         .await
