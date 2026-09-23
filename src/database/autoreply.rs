@@ -4,14 +4,15 @@ use sqlx::Error;
 
 /// Adds an autoreply entry to database
 /// Autoreply entry must already be checked for validity
-pub async fn add_reply(pool: &SqlitePool, trigger: &String, reply: &String) -> Result<(), Error> {
-    query("INSERT OR IGNORE INTO autoreplies (trigger, reply) VALUES (?, ?)")
+/// Returns success or failure
+pub async fn add_reply(pool: &SqlitePool, trigger: &String, reply: &String) -> Result<bool, Error> {
+    let res = query("INSERT OR IGNORE INTO autoreplies (trigger, reply) VALUES (?, ?)")
         .bind(trigger)
         .bind(reply)
         .execute(pool)
         .await?;
 
-    Ok(())
+    Ok(res.rows_affected() > 0)
 }
 
 /// Retrieves one random reply to a specific trigger

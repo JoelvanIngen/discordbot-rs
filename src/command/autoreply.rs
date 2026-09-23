@@ -24,10 +24,17 @@ pub async fn add(
         return Ok(());
     }
 
-    database::autoreply::add_reply(&ctx.data().db_pool, &trigger, &reply).await?;
+    match database::autoreply::add_reply(&ctx.data().db_pool, &trigger, &reply).await? {
+        true => {
+            ctx.reply(format!("Successfully saved {} => {}", trigger, reply))
+                .await?;
+        }
+        false => {
+            ctx.reply(format!("Reply already exists for {} => {}", trigger, reply))
+                .await?;
+        }
+    }
 
-    ctx.reply(format!("Successfully saved {} => {}", trigger, reply))
-        .await?;
     Ok(())
 }
 

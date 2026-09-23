@@ -59,7 +59,7 @@ async fn main() {
 
                 let pool = SqlitePoolOptions::new().connect_with(conn_options).await?;
 
-                database::init_db(&pool).await?;
+                database::run_migrations(&pool).await?;
 
                 Ok(Data { db_pool: pool })
             })
